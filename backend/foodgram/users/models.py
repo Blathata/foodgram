@@ -9,40 +9,44 @@ from django.db.models import (
     UniqueConstraint,
 )
 
+from core.enums import Limits
+from core import help_texts
+
 
 class MyUser(AbstractUser):
     """Кастомная модель пользователя"""
     email = EmailField(
-        max_length=256,
+        max_length=Limits.MAX_LEN_EMAIL_USER.value,
         unique=True,
-        help_text='Обязательно к заполнению. ',
+        help_text=help_texts.HELP_TEXT_EMAIL_USER,
         verbose_name='Электроная почта пользователя'
     )
     username = CharField(
-        max_length=32,
+        max_length=Limits.MAX_LEN_USERNAME_USER.value,
         unique=True,
-        help_text='Обязательно к заполнению. ',
+        help_text=help_texts.HELP_TEXT_USERNAME_USER,
         verbose_name='Юзернейм'
     )
     first_name = CharField(
-        max_length=32,
-        help_text='Обязательно к заполнению. ',
+        max_length=Limits.MAX_LEN_FIRST_NAME_USER.value,
+        help_text=help_texts.HELP_TEXT_FIRST_NAME_USER,
         verbose_name= 'Имя пользователя'
     )
     last_name = CharField(
-        max_length=32,
-        help_text='Обязательно к заполнению. ',
+        max_length=Limits.MAX_LEN_LAST_NAME_USER.value,
+        help_text=help_texts.HELP_TEXT_LAST_NAME_USER,
         verbose_name= 'Фамилия пользователя'
     )
     password = CharField(
+        max_length=Limits.MAX_LEN_PASSWORD_USER.value,
+        help_text=help_texts.HELP_TEXT_PASSWORD_USER,
         verbose_name="Пароль",
-        max_length=128,
-        help_text='Обязательно к заполнению. ',
     )
     is_active = BooleanField(
-        verbose_name="Активирован",
         default=True,
+        verbose_name="Активирован",
     )
+
 
     class Meta:
         ordering = ['id']

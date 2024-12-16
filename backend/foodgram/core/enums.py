@@ -16,18 +16,31 @@ class Tuples(tuple, Enum):
 
 
 class Limits(IntEnum):
-    #Длина поля name модели Recipe приложния recipes
+
     MAX_LEN_NAME_RECIPES_CHARFIELD=200
-    #Длина поля text модели Recipe приложния recipes
+
     MAX_LEN_TEXT_TEXTFIELD=5000
-    #Длина поля name модели Ingredient приложния recipes
+
     MAX_LEN_NAME_INGREDIENT_CHARFIELD=200
-    #Длина поля measurement_unit модели Ingredient приложния recipes
+
     MAX_LEN_MEASUREMENT_CHARFIELD=200
-    #Длина поля name модели Tag приложния recipes
+
     MAX_LEN_NAME_TAG_CHARFIELD=200
-    #Длина поля color модели Tag приложния recipes
+
     MAX_LEN_COLOR_CHARFIELD=7
+
+    MAX_LEN_EMAIL_USER=256
+
+    MAX_LEN_USERNAME_USER=32
+
+    MAX_LEN_FIRST_NAME_USER=32
+
+    MAX_LEN_LAST_NAME_USER=32
+
+    MAX_LEN_PASSWORD_USER=128
+
+    
+
 
 
     # # Максимальная длина email (User)
