@@ -1,3 +1,42 @@
-from django.contrib import admin
+from django.contrib.admin import register, ModelAdmin
+from django.contrib.auth.admin import UserAdmin
+from users.models import Subscribe, MyUser
 
-# Register your models here.
+
+@register(MyUser)
+class MyUserAdmin(UserAdmin):
+    list_display = (
+        "is_active",
+        "username",
+        "first_name",
+        "last_name",
+        "email",
+    )
+    fields = (
+        ("is_active",),
+        (
+            "username",
+            "email",
+        ),
+        (
+            "first_name",
+            "last_name",
+        ),
+    )
+    fieldsets = []
+
+    search_fields = (
+        "username",
+        "email",
+    )
+    list_filter = (
+        "is_active",
+        "first_name",
+        "email",
+    )
+    save_on_top = True
+
+
+@register(Subscribe)
+class SubscribeAdmin(ModelAdmin):
+    list_display = ('user', 'author',)
