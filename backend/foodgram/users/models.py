@@ -1,4 +1,5 @@
 from django.contrib.auth.models import AbstractUser
+from django.contrib.auth import get_user_model
 from django.db.models import (
     CASCADE,
     BooleanField,
@@ -60,13 +61,13 @@ class MyUser(AbstractUser):
 class Subscribe(Model):
     """Модель подписок"""
     user = ForeignKey(
-        MyUser,
+        to=MyUser,
         related_name='subscriber',
         verbose_name="Подписчик",
         on_delete=CASCADE,
     )
     author = ForeignKey(
-        MyUser,
+        to=MyUser,
         related_name='subscribing',
         verbose_name="Автор",
         on_delete=CASCADE,

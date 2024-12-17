@@ -11,7 +11,8 @@ from django.db.models import (
     Model,
     PositiveSmallIntegerField,
     TextField,
-  
+    UniqueConstraint
+
 )
 
 from core.enums import Limits
@@ -24,7 +25,7 @@ class Ingredient(Model):
     """ Модель Ингридиент """
 
     name = CharField(
-        'Название', 
+        'Название',
         max_length=Limits.MAX_LEN_NAME_INGREDIENT_CHARFIELD.value
     )
     measurement_unit = CharField(
@@ -45,8 +46,8 @@ class Tag(Model):
     """ Модель Тэг """
 
     name = CharField(
-        'Название', 
-        unique=True, 
+        'Название',
+        unique=True,
         max_length=Limits.MAX_LEN_NAME_TAG_CHARFIELD.value
     )
     color = CharField(
@@ -78,7 +79,7 @@ class Recipe(Model):
     """ Модель Рецепт """
 
     name = CharField(
-        'Название', 
+        'Название',
         max_length=Limits.MAX_LEN_NAME_RECIPES_CHARFIELD.value
     )
     author = ForeignKey(
