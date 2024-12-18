@@ -11,7 +11,7 @@ from djoser.views import UserViewSet
 from rest_framework.decorators import action
 from rest_framework import status
 from rest_framework.views import APIView
-from rest_framework.viewsets import GenericViewSet
+from rest_framework.viewsets import GenericViewSet, ModelViewSet, ReadOnlyModelViewSet
 from rest_framework.permissions import IsAuthenticated
 
 from recipes.models import Ingredient, Recipe, Tag
@@ -73,11 +73,7 @@ class CustomUserViewSet(UserViewSet):
         return self.get_paginated_response(serializer.data)
 
 
-class IngredientViewSet(CreateModelMixin,
-                   RetrieveModelMixin,
-                   UpdateModelMixin,
-                   ListModelMixin,
-                   GenericViewSet):
+class IngredientViewSet(ReadOnlyModelViewSet):
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
 

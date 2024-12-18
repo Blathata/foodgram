@@ -94,11 +94,14 @@ class Recipe(Model):
         max_length=Limits.MAX_LEN_TEXT_TEXTFIELD.value,
     )
     image = ImageField(
-        'Изображение',
-        upload_to='recipes/'
+        upload_to="photos/%Y/%m/%d/",
+        default=None,
+        blank=True,
+        null=True,
+        verbose_name='Изображение',
     )
     cooking_time = PositiveSmallIntegerField(
-        'Время приготовления',
+        verbose_name='Время приготовления',
         validators=[
             MinValueValidator(1, message='Минимальное значение 1!')
             ]
