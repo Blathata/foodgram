@@ -124,3 +124,18 @@ class Recipe(Model):
 
     def __str__(self):
         return self.name
+
+
+class Favourite(Model):
+    """Модель избаных рецептов"""
+    pass
+
+
+class ShoppingCart(Model):
+    """Модель покупок"""
+    pass
+
+
+class IngredientInRecipe(Model):
+    """Модель связи моделей Ingredient и Recipe"""
+    pass

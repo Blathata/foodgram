@@ -6,22 +6,27 @@ ListModelMixin,
 )
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth import get_user_model
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.response import Response
 from djoser.views import UserViewSet
 from rest_framework.decorators import action
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet, ModelViewSet, ReadOnlyModelViewSet
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import SAFE_METHODS, IsAuthenticated
 
 from recipes.models import Ingredient, Recipe, Tag
+from .filters import IngredientFilter, RecipeFilter
+from .permissions import IsAdminOrReadOnly, IsAuthorOrReadOnly
 from users.models import Subscribe
 from .serializers import (
-    IngredientSerializer,
-    RecipeSerializer,
-    TagSerializer,
     CustomUserSerializer,
-    SubscribeSerializer
+    IngredientSerializer,
+    RecipeReadSerializer,
+    RecipeShortSerializer,
+    SubscribeSerializer,
+    RecipeWriteSerializer,
+    TagSerializer
     )
 from .pagination import CustomPagination
 
@@ -76,21 +81,28 @@ class CustomUserViewSet(UserViewSet):
 class IngredientViewSet(ReadOnlyModelViewSet):
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
+    permission_classes = (IsAdminOrReadOnly,)
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = IngredientFilter
 
 
-class RecipeViewSet(CreateModelMixin,
-                   RetrieveModelMixin,
-                   UpdateModelMixin,
-                   ListModelMixin,
-                   GenericViewSet):
-    queryset = Recipe.objects.all()
-    serializer_class = RecipeSerializer
-
-
-class TagViewSet(CreateModelMixin,
-                   RetrieveModelMixin,
-                   UpdateModelMixin,
-                   ListModelMixin,
-                   GenericViewSet):
+class TagViewSet(ReadOnlyModelViewSet):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
+    permission_classes = (IsAdminOrReadOnly,)
+
+
+class RecipeViewSet(ModelViewSet):
+    queryset = Recipe.objects.all()
+    permission_classes = (IsAuthorOrReadOnly | IsAdminOrReadOnly,)
+    pagination_class = CustomPagination
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = RecipeFilter
+
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)
+
+    def get_serializer_class(self):
+        if self.request.method in SAFE_METHODS:
+            return RecipeReadSerializer
+        return RecipeWriteSerializer
