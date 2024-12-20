@@ -127,15 +127,82 @@ class Recipe(Model):
 
 
 class Favourite(Model):
-    """Модель избаных рецептов"""
-    pass
+    """Модель избраных рецептов"""
+
+    user = ForeignKey(
+        User,
+        on_delete=CASCADE,
+        related_name='favorites',
+        verbose_name='Пользователь',
+    )
+    recipe = ForeignKey(
+        Recipe,
+        on_delete=CASCADE,
+        related_name='favorites',
+        verbose_name='Рецепт',
+    )
+
+    class Meta:
+        verbose_name = 'Избранное'
+        verbose_name_plural = 'Избранное'
+        constraints = [
+            UniqueConstraint(fields=['user', 'recipe'], name='unique_favourite')
+        ]
+
+    def __str__(self):
+        return f'{self.user} добавил "{self.recipe}" в Избранное'
 
 
 class ShoppingCart(Model):
     """Модель покупок"""
-    pass
+    user = ForeignKey(
+        User,
+        on_delete=CASCADE,
+        related_name='shopping_cart',
+        verbose_name='Пользователь',
+    )
+    recipe = ForeignKey(
+        Recipe,
+        on_delete=CASCADE,
+        related_name='shopping_cart',
+        verbose_name='Рецепт',
+    )
+
+    class Meta:
+        verbose_name = 'Корзина покупок'
+        verbose_name_plural = 'Корзина покупок'
+        constraints = [
+            UniqueConstraint(fields=['user', 'recipe'], name='unique_shopping_cart')
+        ]
+
+    def __str__(self):
+        return f'{self.user} добавил "{self.recipe}" в Корзину покупок'
 
 
 class IngredientInRecipe(Model):
     """Модель связи моделей Ingredient и Recipe"""
-    pass
+
+    recipe = ForeignKey(
+        Recipe,
+        on_delete= CASCADE,
+        related_name='ingredient_list',
+        verbose_name='Рецепт',
+    )
+    ingredient = ForeignKey(
+        Ingredient,
+        on_delete= CASCADE,
+        verbose_name='Ингредиент',
+    )
+    amount = PositiveSmallIntegerField(
+        'Количество',
+        validators=[MinValueValidator(1, message='Минимальное количество 1!')]
+    )
+
+    class Meta:
+        verbose_name = 'Ингредиент в рецепте'
+        verbose_name_plural = 'Ингредиенты в рецептах'
+
+    def __str__(self):
+        return (
+            f'{self.ingredient.name} ({self.ingredient.measurement_unit}) - {self.amount} '
+        )

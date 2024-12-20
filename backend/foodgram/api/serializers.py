@@ -38,19 +38,6 @@ class CustomUserSerializer(UserSerializer):
         return Subscribe.objects.filter(user=user, author=obj).exists()
 
 
-class CustomUserCreateSerializer(UserCreateSerializer):
-    """Сериализатор создание нового пользователя"""
-    class Meta:
-        model = User
-        fields = (
-            'email',
-            'username',
-            'first_name',
-            'last_name',
-            'password',
-    )
-
-
 class SubscribeSerializer(CustomUserSerializer):
     """Сериализатор работы с подпиской"""
     recipes_count = SerializerMethodField()
@@ -93,7 +80,21 @@ class SubscribeSerializer(CustomUserSerializer):
         return serializer.data
 
 
+class CustomUserCreateSerializer(UserCreateSerializer):
+    """Сериализатор создание нового пользователя"""
+    class Meta:
+        model = User
+        fields = (
+            'email',
+            'username',
+            'first_name',
+            'last_name',
+            'password',
+    )
+
+
 class IngredientSerializer(ModelSerializer):
+    """Сериализатор отображения ингридиентов"""
     class Meta:
         model = Ingredient
         fields = '__all__'
@@ -107,6 +108,7 @@ class TagSerializer(ModelSerializer):
 
 
 class RecipeReadSerializer(ModelSerializer):
+    """Сериализатор обзора рецепта"""
     tags = TagSerializer(many=True, read_only=True)
     author = CustomUserSerializer(read_only=True)
     ingredients = SerializerMethodField()
@@ -223,6 +225,7 @@ class RecipeWriteSerializer(ModelSerializer):
 
     @transaction.atomic
     def create(self, validated_data):
+        """Добавление данных"""
         tags = validated_data.pop('tags')
         ingredients = validated_data.pop('ingredients')
         recipe = Recipe.objects.create(**validated_data)
@@ -232,6 +235,7 @@ class RecipeWriteSerializer(ModelSerializer):
 
     @transaction.atomic
     def update(self, instance, validated_data):
+        """Изменение данных"""
         tags = validated_data.pop('tags')
         ingredients = validated_data.pop('ingredients')
         instance = super().update(instance, validated_data)
