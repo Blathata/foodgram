@@ -39,7 +39,9 @@ class Limits(IntEnum):
 
     MAX_LEN_PASSWORD_USER=128
 
-    
+    MAX_LEN_SLUG_TAG=200
+
+
 
 
 

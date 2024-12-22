@@ -25,3 +25,18 @@ HELP_TEXT_PASSWORD_USER = (
     "Обязательно для заполнения. "
     f"Максимум {Limits.MAX_LEN_PASSWORD_USER} символов."
 )
+
+HELP_TEXT_NAME_TAG = (
+    "Название тэга. "
+    f"Максимум {Limits.MAX_LEN_NAME_TAG_CHARFIELD} символов."
+)
+
+HELP_TEXT_COLOR_TAG = (
+    "Заполняется в формате HEX. Пример #ffffff.  "
+    f"Максимум {Limits.MAX_LEN_COLOR_CHARFIELD} символов."
+)
+
+HELP_TEXT_SLUG_TAG = (
+    "Заполняется автоматически по названию. "
+    f"Максимум {Limits.MAX_LEN_SLUG_TAG} символов."
+)

@@ -129,9 +129,11 @@ class RecipeReadSerializer(ModelSerializer):
             'image',
             'text',
             'cooking_time',
+            'is_published',
         )
 
     def get_ingredients(self, obj):
+        """Показать ингредиенты"""
         recipe = obj
         ingredients = recipe.ingredients.values(
             'id',
@@ -142,6 +144,7 @@ class RecipeReadSerializer(ModelSerializer):
         return ingredients
 
     def get_is_favorited(self, obj):
+        """Показать любимые"""
         user = self.context.get('request').user
         if user.is_anonymous:
             return False

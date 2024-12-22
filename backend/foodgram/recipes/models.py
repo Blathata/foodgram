@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator, RegexValidator
+from slugify import slugify
 from django.db.models import (
     CASCADE,
     SET_NULL,
@@ -11,26 +12,34 @@ from django.db.models import (
     Model,
     PositiveSmallIntegerField,
     TextField,
-    UniqueConstraint
-
+    UniqueConstraint,
+    IntegerChoices,
+    BooleanField,
+    Manager,
 )
 
 from core.enums import Limits
-
+from core import help_texts
 
 User = get_user_model()
+
+
+class PublishedManager(Manager):
+    """Пользовательский менеджер модели"""
+    def get_queryset(self):
+        return super().get_queryset().filter(is_published=Recipe.Status.PUBLISHED)
 
 
 class Ingredient(Model):
     """ Модель Ингридиент """
 
     name = CharField(
-        'Название',
-        max_length=Limits.MAX_LEN_NAME_INGREDIENT_CHARFIELD.value
+        max_length=Limits.MAX_LEN_NAME_INGREDIENT_CHARFIELD.value,
+        verbose_name = 'Название',
     )
     measurement_unit = CharField(
-        'Единица измерения',
-        max_length=Limits.MAX_LEN_MEASUREMENT_CHARFIELD.value
+        max_length=Limits.MAX_LEN_MEASUREMENT_CHARFIELD.value,
+        verbose_name = 'Единица измерения',
     )
 
     class Meta:
@@ -44,27 +53,30 @@ class Ingredient(Model):
 
 class Tag(Model):
     """ Модель Тэг """
-
     name = CharField(
-        'Название',
+        max_length=Limits.MAX_LEN_NAME_TAG_CHARFIELD.value,
         unique=True,
-        max_length=Limits.MAX_LEN_NAME_TAG_CHARFIELD.value
+        help_text=help_texts.HELP_TEXT_NAME_TAG,
+        verbose_name = 'Название'
     )
     color = CharField(
-        'Цветовой HEX-код',
-        unique=True,
         max_length=Limits.MAX_LEN_COLOR_CHARFIELD.value,
+        unique=True,
+        help_text=help_texts.HELP_TEXT_COLOR_TAG,
         validators=[
             RegexValidator(
                 regex='^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$',
                 message='Введенное значение не является цветом в формате HEX!'
-            )
-        ]
+            ),
+        ],
+        verbose_name = 'Цветовой HEX-код',
     )
     slug = SlugField(
-        'Уникальный слаг',
+        max_length=Limits.MAX_LEN_SLUG_TAG.value,
         unique=True,
-        max_length=200
+        blank=True,
+        help_text=help_texts.HELP_TEXT_SLUG_TAG,
+        verbose_name="Slug",
     )
 
     class Meta:
@@ -75,8 +87,18 @@ class Tag(Model):
         return self.name
 
 
+    def save(self,  *args, **kwargs):
+        """Перезаписывает поле slug c поля name"""
+        self.slug = slugify(self.name)
+        return super(Tag, self).save(*args, **kwargs)
+
+
 class Recipe(Model):
     """ Модель Рецепт """
+    class Status(IntegerChoices):
+        """Отображает статус публикации"""
+        DRAFT = 0, 'Черновик'
+        PUBLISHED = 1, 'Опубликовано'
 
     name = CharField(
         'Название',
@@ -100,6 +122,11 @@ class Recipe(Model):
         null=True,
         verbose_name='Изображение',
     )
+    is_published = BooleanField(
+        choices=tuple(map(lambda x: (bool(x[0]), x[1]), Status.choices)),
+        default=Status.DRAFT,
+        verbose_name="Статус",
+    )
     cooking_time = PositiveSmallIntegerField(
         verbose_name='Время приготовления',
         validators=[
@@ -121,6 +148,9 @@ class Recipe(Model):
         ordering = ['-id']
         verbose_name = 'Рецепт'
         verbose_name_plural = 'Рецепты'
+
+    objects = Manager()
+    published = PublishedManager()
 
     def __str__(self):
         return self.name
@@ -194,8 +224,8 @@ class IngredientInRecipe(Model):
         verbose_name='Ингредиент',
     )
     amount = PositiveSmallIntegerField(
-        'Количество',
-        validators=[MinValueValidator(1, message='Минимальное количество 1!')]
+        validators=[MinValueValidator(1, message='Минимальное количество 1!')],
+        verbose_name='Количество',
     )
 
     class Meta:
