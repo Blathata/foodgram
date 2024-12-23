@@ -34,11 +34,11 @@ class Ingredient(Model):
     """ Модель Ингридиент """
 
     name = CharField(
-        max_length=Limits.MAX_LEN_NAME_INGREDIENT_CHARFIELD.value,
+        max_length=Limits.MAX_LEN_NAME_INGREDIENT.value,
         verbose_name = 'Название',
     )
     measurement_unit = CharField(
-        max_length=Limits.MAX_LEN_MEASUREMENT_CHARFIELD.value,
+        max_length=Limits.MAX_LEN_MEASUREMENT_INGREDIENT.value,
         verbose_name = 'Единица измерения',
     )
 
@@ -54,13 +54,13 @@ class Ingredient(Model):
 class Tag(Model):
     """ Модель Тэг """
     name = CharField(
-        max_length=Limits.MAX_LEN_NAME_TAG_CHARFIELD.value,
+        max_length=Limits.MAX_LEN_NAME_TAG.value,
         unique=True,
         help_text=help_texts.HELP_TEXT_NAME_TAG,
         verbose_name = 'Название'
     )
     color = CharField(
-        max_length=Limits.MAX_LEN_COLOR_CHARFIELD.value,
+        max_length=Limits.MAX_LEN_COLOR_TAG.value,
         unique=True,
         help_text=help_texts.HELP_TEXT_COLOR_TAG,
         validators=[
@@ -102,7 +102,7 @@ class Recipe(Model):
 
     name = CharField(
         'Название',
-        max_length=Limits.MAX_LEN_NAME_RECIPES_CHARFIELD.value
+        max_length=Limits.MAX_LEN_NAME_RECIPES.value
     )
     author = ForeignKey(
         User,
@@ -113,7 +113,7 @@ class Recipe(Model):
     )
     text = TextField(
         verbose_name="Описание блюда",
-        max_length=Limits.MAX_LEN_TEXT_TEXTFIELD.value,
+        max_length=Limits.MAX_LEN_TEXT_RECIPES.value,
     )
     image = ImageField(
         upload_to="photos/%Y/%m/%d/",

@@ -28,12 +28,12 @@ HELP_TEXT_PASSWORD_USER = (
 
 HELP_TEXT_NAME_TAG = (
     "Название тэга. "
-    f"Максимум {Limits.MAX_LEN_NAME_TAG_CHARFIELD} символов."
+    f"Максимум {Limits.MAX_LEN_NAME_TAG} символов."
 )
 
 HELP_TEXT_COLOR_TAG = (
     "Заполняется в формате HEX. Пример #ffffff.  "
-    f"Максимум {Limits.MAX_LEN_COLOR_CHARFIELD} символов."
+    f"Максимум {Limits.MAX_LEN_COLOR_TAG} символов."
 )
 
 HELP_TEXT_SLUG_TAG = (

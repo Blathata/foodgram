@@ -97,14 +97,14 @@ class IngredientSerializer(ModelSerializer):
     """Сериализатор отображения ингридиентов"""
     class Meta:
         model = Ingredient
-        fields = '__all__'
+        fields = ("id", "name",  "measurement_unit")
         read_only_fields = ("__all__",)
 
 
 class TagSerializer(ModelSerializer):
     class Meta:
         model = Tag
-        fields = '__all__'
+        fields =  ("id", "name", "color", "slug")
 
 
 class RecipeReadSerializer(ModelSerializer):
