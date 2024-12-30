@@ -39,4 +39,4 @@ class MyUserAdmin(UserAdmin):
 
 @register(Subscribe)
 class SubscribeAdmin(ModelAdmin):
-    list_display = ('user', 'author',)
+    list_display = ('user', 'author', 'subscription_date')

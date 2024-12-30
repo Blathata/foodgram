@@ -8,6 +8,7 @@ from django.db.models import (
     ForeignKey,
     Model,
     UniqueConstraint,
+    DateTimeField,
 )
 
 from core.enums import Limits
@@ -72,6 +73,11 @@ class Subscribe(Model):
         verbose_name="Автор",
         on_delete=CASCADE,
     )
+    subscription_date = DateTimeField(
+        verbose_name="Дата подписки",
+        auto_now_add=True,
+        editable=False,
+    )  
 
     class Meta:
         ordering = ['-id']
