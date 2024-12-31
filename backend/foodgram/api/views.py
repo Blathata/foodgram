@@ -6,6 +6,7 @@ ListModelMixin,
 )
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth import get_user_model
+from django.core.handlers.wsgi import WSGIRequest
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.response import Response
 from djoser.views import UserViewSet
@@ -44,7 +45,8 @@ class CustomUserViewSet(UserViewSet):
         methods=['post', 'delete'],
         permission_classes=[IsAuthenticated]
     )
-    def subscribe(self, request, **kwargs):
+    def subscribe(self, request: WSGIRequest, **kwargs)-> Response:
+        """Создаёт/удалет связь между пользователями."""
         user = request.user
         author_id = self.kwargs.get('id')
         author = get_object_or_404(User, id=author_id)
@@ -68,7 +70,8 @@ class CustomUserViewSet(UserViewSet):
         detail=False,
         permission_classes=[IsAuthenticated]
     )
-    def subscriptions(self, request):
+    def subscriptions(self, request: WSGIRequest)-> Response:
+        """Список подписок пользоваетеля."""
         user = request.user
         queryset = User.objects.filter(subscribing__user=user)
         pages = self.paginate_queryset(queryset)
