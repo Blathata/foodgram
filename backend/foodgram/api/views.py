@@ -68,7 +68,7 @@ class CustomUserViewSet(UserViewSet):
 
     @action(
         detail=False,
-        permission_classes=[IsAuthenticated]
+        permission_classes=[IsAuthenticated]aa
     )
     def subscriptions(self, request: WSGIRequest)-> Response:
         """Список подписок пользоваетеля."""
