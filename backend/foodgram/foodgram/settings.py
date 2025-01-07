@@ -7,13 +7,14 @@ load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-#c^e*c0@!u#t%qkr4sn@fp85d$6v25&(b%f=uv2bob01()5*_-'
-#SECRET_KEY = os.getenv(key='SECRET_KEY')
+#SECRET_KEY='django-insecure-#c^e*c0@!u#t%qkr4sn@fp85d$6v25&(b%f=uv2bob01()5*_-'
+SECRET_KEY = os.getenv('SECRET_KEY', '123')
 
-DEBUG = True
+#ALLOWED_HOSTS = ['*'] 
+#ALLOWED_HOSTS = ['84.201.153.218', '127.0.0.1', 'localhost', 'iblat.site'] 
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '*').split(',')
 
-ALLOWED_HOSTS = ['*'] 
-# ALLOWED_HOSTS = ['84.201.153.218', '127.0.0.1', 'localhost', 'iblat.site'] 
+DEBUG = os.getenv('DEBUG', 'False') == 'True' 
 
 
 INSTALLED_APPS = [
@@ -74,6 +75,18 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': os.getenv('DB_ENGINE'),
+#         'NAME': os.getenv('POSTGRES_DB'),
+#         'USER': os.getenv('POSTGRES_USER'),
+#         'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
+#         'HOST': os.getenv('DB_HOST'),
+#         'PORT': os.getenv('DB_PORT')
+#     }
+# }
+
 
 AUTH_USER_MODEL = 'users.MyUser'
 
