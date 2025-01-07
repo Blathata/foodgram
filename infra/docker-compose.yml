@@ -12,7 +12,7 @@ services:
     restart: always
 
   backend:
-    container_name: foodgram-app
+    container_name: foodgram-backend
     #image: blathata/foodgram_beckend:latest
     build: ../backend
     restart: always
@@ -26,14 +26,14 @@ services:
       - ./.env
 
   frontend:
-    container_name: foodgram-front
+    container_name: foodgram-frontend
     #image: blathata/foodgram_frontend:latest
     build: ../frontend
     volumes:
       - ../frontend/:/app/result_build/
 
   nginx:
-    container_name: foodgram-proxy
+    container_name: foodgram-nginx
     image: nginx:1.21.3-alpine
     ports:
       - "80:80"
