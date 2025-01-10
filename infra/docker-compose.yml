@@ -3,7 +3,6 @@ version: '2.6'
 services:
 
   db:
-    container_name: foodgram-db
     image: postgres:13.0-alpine
     volumes:
       - postgres_data:/var/lib/postgresql/data/

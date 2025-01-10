@@ -10,11 +10,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 #SECRET_KEY='django-insecure-#c^e*c0@!u#t%qkr4sn@fp85d$6v25&(b%f=uv2bob01()5*_-'
 SECRET_KEY = os.getenv('SECRET_KEY', '123')
 
-#ALLOWED_HOSTS = ['*'] 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost',]
+ALLOWED_HOSTS = ['*']
+# ALLOWED_HOSTS = ['127.0.0.1', 'localhost',]
 # ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '*').split(',')
 
 DEBUG = os.getenv('DEBUG', 'False') == 'True' 
+
+# CSRF_TRUSTED_ORIGINS = []
 
 
 INSTALLED_APPS = [
@@ -130,8 +132,13 @@ REST_FRAMEWORK = {
     ]
 }
 
+# AUTHENTICATION_BACKENDS = [
+#     "djoser.auth_backends.LoginFieldBackend",
+# ]
 
 DJOSER = {
+    "LOGIN_FIELD": "email",
+    "HIDE_USERS": False,
     'SERIALIZERS': {
         'user_create': 'api.serializers.CustomUserCreateSerializer',
         'user': 'api.serializers.CustomUserSerializer',
@@ -142,7 +149,6 @@ DJOSER = {
         'user': ['djoser.permissions.CurrentUserOrAdminOrReadOnly'],
         'user_list': ['rest_framework.permissions.IsAuthenticatedOrReadOnly'],
     },
-    'HIDE_USERS': False,
 }
 
 
