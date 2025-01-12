@@ -59,18 +59,6 @@ class Tag(Model):
         help_text=help_texts.HELP_TEXT_NAME_TAG,
         verbose_name = 'Название'
     )
-    color = CharField(
-        max_length=Limits.MAX_LEN_COLOR_TAG.value,
-        unique=True,
-        help_text=help_texts.HELP_TEXT_COLOR_TAG,
-        validators=[
-            RegexValidator(
-                regex='^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$',
-                message='Введенное значение не является цветом в формате HEX!'
-            ),
-        ],
-        verbose_name = 'Цветовой HEX-код',
-    )
     slug = SlugField(
         max_length=Limits.MAX_LEN_SLUG_TAG.value,
         unique=True,

@@ -55,7 +55,7 @@ class IngredientAdmin(ModelAdmin):
 
 @register(Tag)
 class TagAdmin(ModelAdmin):
-    list_display = ('name', 'color', 'slug',)
+    list_display = ('name', 'slug',)
 
 
 @register(ShoppingCart)

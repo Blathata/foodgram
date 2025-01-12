@@ -21,6 +21,7 @@ from .filters import IngredientFilter, RecipeFilter
 from .permissions import IsAdminOrReadOnly, IsAuthorOrReadOnly
 from users.models import Subscribe
 from .serializers import (
+    AvatarSerializer,
     CustomUserSerializer,
     IngredientSerializer,
     RecipeReadSerializer,
@@ -80,6 +81,25 @@ class CustomUserViewSet(UserViewSet):
                                          context={'request': request})
         return self.get_paginated_response(serializer.data)
 
+class UserAvatarView(APIView):
+    """Работа с аватаром."""
+
+    permission_classes = [IsAuthenticated]
+
+    def put(self, request, *args, **kwargs):
+        user = request.user
+        serializer = AvatarSerializer(user, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response({
+            'avatar': request.build_absolute_uri(user.avatar.url)
+        }, status=status.HTTP_200_OK)
+
+    def delete(self, request, *args, **kwargs):
+        user = request.user
+        user.avatar.delete(save=True)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 class IngredientViewSet(ReadOnlyModelViewSet):
     queryset = Ingredient.objects.all()

@@ -28,6 +28,7 @@ class CustomUserSerializer(UserSerializer):
             'first_name',
             'last_name',
             'is_subscribed',
+            'avatar',
         )
 
     def get_is_subscribed(self, obj):
@@ -93,6 +94,24 @@ class CustomUserCreateSerializer(UserCreateSerializer):
     )
 
 
+class AvatarSerializer(ModelSerializer):
+    """Сериализатор аватара пользователя."""
+
+    avatar = Base64ImageField(max_length=None, use_url=True)
+
+    class Meta:
+        model = User
+        fields = ['avatar']
+
+    def validate(self, data):
+
+        if 'avatar' not in data:
+            raise ValidationError(
+                {'avatar': 'Это поле обязательно для заполнения.'}
+            )
+        return data
+
+
 class IngredientSerializer(ModelSerializer):
     """Сериализатор отображения ингридиентов"""
     class Meta:
@@ -104,7 +123,7 @@ class IngredientSerializer(ModelSerializer):
 class TagSerializer(ModelSerializer):
     class Meta:
         model = Tag
-        fields =  ("id", "name", "color", "slug")
+        fields =  ("id", "name", "slug")
 
 
 class RecipeReadSerializer(ModelSerializer):

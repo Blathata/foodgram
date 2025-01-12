@@ -5,6 +5,7 @@ from django.db.models import (
     BooleanField,
     CharField,
     EmailField,
+    ImageField,
     ForeignKey,
     Model,
     UniqueConstraint,
@@ -48,6 +49,11 @@ class MyUser(AbstractUser):
         default=True,
         verbose_name="Активирован",
     )
+    avatar = ImageField(
+        upload_to='avatar/',
+        blank=True,
+        null=True,
+        verbose_name='Аватар')
 
 
     class Meta:
