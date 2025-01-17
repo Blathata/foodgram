@@ -6,7 +6,8 @@ from .views import (
     RecipeViewSet, 
     TagViewSet, 
     CustomUserViewSet,
-    UserAvatarView
+    UserAvatarView,
+    UserSelfView
     )
 
 
@@ -26,9 +27,9 @@ urlpatterns = [
     path(
         'users/me/avatar/', UserAvatarView.as_view(), name='user-avatar'
     ),
-    # path(
-    #     'users/me/', views.UserSelfView.as_view(), name='user-self'
-    # ),
+    path(
+        'users/me/', UserSelfView.as_view(), name='user-self'
+    ),
     # path(
     #     'users/set_password/',
     #     djoser_views.UserViewSet.as_view({'post': 'set_password'}),

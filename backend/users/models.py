@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth import get_user_model
+from django.core.validators import RegexValidator
 from django.db.models import (
     CASCADE,
     BooleanField,
@@ -18,6 +19,8 @@ from core import help_texts
 
 class MyUser(AbstractUser):
     """Кастомная модель пользователя"""
+    USER_REGEX = r'^[\w.@+-]+$'
+
     email = EmailField(
         max_length=Limits.MAX_LEN_EMAIL_USER.value,
         unique=True,
@@ -27,8 +30,15 @@ class MyUser(AbstractUser):
     username = CharField(
         max_length=Limits.MAX_LEN_USERNAME_USER.value,
         unique=True,
+        db_index=True,
         help_text=help_texts.HELP_TEXT_USERNAME_USER,
-        verbose_name='Юзернейм'
+        verbose_name='Юзернейм',
+        validators=[
+            RegexValidator(
+                regex=USER_REGEX,
+                message='Используйте только буквы и символы: w . @ + - ',
+            ),
+        ]
     )
     first_name = CharField(
         max_length=Limits.MAX_LEN_FIRST_NAME_USER.value,

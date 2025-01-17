@@ -86,12 +86,39 @@ class CustomUserCreateSerializer(UserCreateSerializer):
     class Meta:
         model = User
         fields = (
+            'id',
             'email',
             'username',
             'first_name',
             'last_name',
             'password',
     )
+
+
+class UserSerializer(ModelSerializer):
+    """Представление информации о пользователях."""
+
+    is_subscribed = SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = (
+            'email', 'id', 'username', 'first_name',
+            'last_name', 'is_subscribed', 'avatar'
+        )
+
+    # def get_is_subscribed(self, obj):
+    #     request = self.context.get('request')
+
+    #     if request and hasattr(
+    #         request, 'user'
+    #     ) and request.user.is_authenticated:
+
+    #         return Subscribe.objects.filter(
+    #             user=request.user, author=obj
+    #         ).exists()
+
+    #     return False
 
 
 class AvatarSerializer(ModelSerializer):

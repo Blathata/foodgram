@@ -14,7 +14,7 @@ from rest_framework.decorators import action
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet, ModelViewSet, ReadOnlyModelViewSet
-from rest_framework.permissions import SAFE_METHODS, IsAuthenticated
+from rest_framework.permissions import AllowAny, SAFE_METHODS, IsAuthenticated
 
 from recipes.models import Ingredient, Recipe, Tag
 from .filters import IngredientFilter, RecipeFilter
@@ -25,6 +25,7 @@ from .serializers import (
     CustomUserSerializer,
     IngredientSerializer,
     RecipeReadSerializer,
+    UserSerializer,
     RecipeShortSerializer,
     SubscribeSerializer,
     RecipeWriteSerializer,
@@ -37,6 +38,8 @@ User = get_user_model()
 
 
 class CustomUserViewSet(UserViewSet):
+    
+    permission_classes = (AllowAny,)
     queryset = User.objects.all()
     serializer_class = CustomUserSerializer
     pagination_class = CustomPagination
@@ -81,6 +84,16 @@ class CustomUserViewSet(UserViewSet):
                                          context={'request': request})
         return self.get_paginated_response(serializer.data)
 
+class UserSelfView(APIView):
+    """Получения данных аутентифицированного текущего пользователя."""
+
+    permission_classes = (IsAuthenticated,)
+    pagination_class = CustomPagination
+
+    def get(self, request):
+        serializer = UserSerializer(request.user)
+        return Response(serializer.data)
+
 class UserAvatarView(APIView):
     """Работа с аватаром."""
 
@@ -101,30 +114,40 @@ class UserAvatarView(APIView):
         user.avatar.delete(save=True)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-class IngredientViewSet(ReadOnlyModelViewSet):
+class IngredientViewSet(ModelViewSet):
+    """Представление для работы с моделью Ingredient через API"""
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
-    permission_classes = (IsAdminOrReadOnly,)
+    http_method_names = ('get',)
+    permission_classes = (AllowAny,)
     filter_backends = (DjangoFilterBackend,)
+    pagination_class = None
     filterset_class = IngredientFilter
 
-class TagViewSet(ReadOnlyModelViewSet):
+
+class TagViewSet(ModelViewSet):
+    """Представление для работы с моделью Tag через API"""
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
-    permission_classes = (IsAdminOrReadOnly,)
+    permission_classes = (AllowAny, )
+    http_method_names = ['get']
+    pagination_class = None
 
 
 class RecipeViewSet(ModelViewSet):
-    queryset = Recipe.published.all()
+    """Представление для работы с моделью Recipe через API"""
+    queryset = Recipe.objects.all()
     permission_classes = (IsAuthorOrReadOnly | IsAdminOrReadOnly,)
     pagination_class = CustomPagination
     filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipeFilter
 
     def perform_create(self, serializer):
+        """Добавление информации обьекта запроса"""
         serializer.save(author=self.request.user)
 
     def get_serializer_class(self):
+        """Возвращает класс, сериализатора взависимости от метода"""
         if self.request.method in SAFE_METHODS:
             return RecipeReadSerializer
         return RecipeWriteSerializer
