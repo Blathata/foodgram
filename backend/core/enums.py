@@ -1,19 +1,6 @@
 """Настройки параметров.
 """
-from enum import Enum, IntEnum
-
-
-class Tuples(tuple, Enum):
-    pass
-    # # Размер сохраняемого изображения рецепта
-    # RECIPE_IMAGE_SIZE = 500, 500
-    # # Поиск объектов только с переданным параметром.
-    # # Например только в избранном: `is_favorited=1`
-    # SYMBOL_TRUE_SEARCH = "1", "true"
-    # # Поиск объектов не содержащих переданный параметр.
-    # # Например только не избранное: `is_favorited=0`
-    # SYMBOL_FALSE_SEARCH = "0", "false"
-
+from enum import IntEnum
 
 class Limits(IntEnum):
 
@@ -39,16 +26,12 @@ class Limits(IntEnum):
 
     MAX_LEN_PASSWORD_USER=128
 
+    MIN_COOKING_TIME=1
 
-class UrlQueries(str, Enum):
-    pass
-    # # Параметр для поиска ингридиентов по вхождению значения в название
-    # SEARCH_ING_NAME = "name"
-    # # Параметр для поиска объектов в списке "избранное"
-    # FAVORITE = "is_favorited"
-    # # Параметр для поиска объектов в списке "покупки"
-    # SHOP_CART = "is_in_shopping_cart"
-    # # Параметр для поиска объектов по автору
-    # AUTHOR = "author"
-    # # Параметр для поиска объектов по тэгам
-    # TAGS = "tags"
+    MAX_COOKING_TIME=1440
+
+    MIN_AMOUNT_SUM=1
+
+    MAX_AMOUNT_SUM=1000
+
+    PAGE_SIZE=6

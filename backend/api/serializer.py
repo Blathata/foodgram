@@ -22,7 +22,7 @@ from recipes.models import (
     Tag,
 )
 from users.models import Subscription
-from core import constants
+from core.enums import Limits
 
 from core.utils import get_serializer_method_field_value
 
@@ -322,11 +322,14 @@ class SubscriberDetailSerializer(ModelSerializer):
 
     def get_recipes(self, obj):
         request = self.context.get("request")
-        limit = request.GET.get("recipes_limit", constants.PAGE_SIZE)
+        limit = request.GET.get(
+            "recipes_limit",
+            Limits.PAGE_SIZE.value
+        )
         limit = (
             int(limit)
             if isinstance(limit, str) and limit.isdigit()
-            else constants.PAGE_SIZE
+            else Limits.PAGE_SIZE.value
         )
 
         return ShortRecipeSerializer(

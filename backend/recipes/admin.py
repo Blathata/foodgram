@@ -9,7 +9,7 @@ from .models import (
     ShoppingList,
     Favorite,
     RecipeIngredient,
-    )
+)
 
 
 @register(Recipe)
@@ -28,7 +28,6 @@ class RecipeAdmin(ModelAdmin):
     actions = ('set_published', 'set_draft')
     search_fields = ('name',)
 
-
     @display(description='В избранных')
     def in_favorites(self, obj):
         return obj.favorites.count()
@@ -44,7 +43,7 @@ class RecipeAdmin(ModelAdmin):
         self.message_user(
             request, f"{count} записей сняты с публикации!",
             messages.WARNING,
-            )
+        )
 
 
 @register(Ingredient)

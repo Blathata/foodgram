@@ -3,12 +3,11 @@
 from django.contrib.auth import get_user_model
 from django.core.validators import (
     MaxValueValidator,
-    MinValueValidator, 
+    MinValueValidator,
     RegexValidator
-    )
+)
 from django.db.models import (
     CASCADE,
-    SET_NULL,
     CharField,
     SlugField,
     ForeignKey,
@@ -32,7 +31,9 @@ User = get_user_model()
 class PublishedManager(Manager):
     """Пользовательский менеджер модели"""
     def get_queryset(self):
-        return super().get_queryset().filter(is_published=Recipe.Status.PUBLISHED)
+        return super().get_queryset().filter(
+            is_published=Recipe.Status.PUBLISHED
+        )
 
 
 class Ingredient(Model):
@@ -41,11 +42,11 @@ class Ingredient(Model):
     name = CharField(
         max_length=Limits.MAX_LEN_NAME_INGREDIENT.value,
         db_index=True,
-        verbose_name = 'Название',
+        verbose_name='Название',
     )
     measurement_unit = CharField(
         max_length=Limits.MAX_LEN_MEASUREMENT_INGREDIENT.value,
-        verbose_name = 'Единица измерения',
+        verbose_name='Единица измерения',
     )
 
     class Meta:
@@ -66,12 +67,12 @@ class Ingredient(Model):
 class Tag(Model):
     """ Тэги для рецептов."""
     SLAG_REGEX = r'^[-a-zA-Z0-9_]+$'
-    
+
     name = CharField(
         max_length=Limits.MAX_LEN_NAME_TAG.value,
         unique=True,
         help_text=help_texts.HELP_TEXT_NAME_TAG,
-        verbose_name = 'Название'
+        verbose_name='Название'
     )
     slug = SlugField(
         max_length=Limits.MAX_LEN_SLUG_TAG.value,
@@ -90,9 +91,9 @@ class Tag(Model):
         verbose_name = 'Тег'
         verbose_name_plural = 'Теги'
         constraints = (
-        UniqueConstraint(
-            fields=('name', 'slug'),
-            name='unique_tags',
+            UniqueConstraint(
+                fields=('name', 'slug'),
+                name='unique_tags',
             ),
         )
 
@@ -124,7 +125,7 @@ class Recipe(Model):
         on_delete=CASCADE,
         related_name="recipes",
         verbose_name="Автор рецепта",
-    ) 
+    )
     is_published = BooleanField(
         choices=tuple(map(lambda x: (bool(x[0]), x[1]), Status.choices)),
         default=Status.DRAFT,
@@ -132,8 +133,14 @@ class Recipe(Model):
     )
     cooking_time = PositiveSmallIntegerField(
         validators=(
-            MinValueValidator(1, f"Не может быть меньше 1 минут(ы)",),
-            MaxValueValidator(1440,f'Не может быть больше 1440 минут(ы)'),
+            MinValueValidator(
+                Limits.MIN_COOKING_TIME.value,
+                f"Не мение {Limits.MIN_COOKING_TIME.value} минуты",
+            ),
+            MaxValueValidator(
+                Limits.MAX_COOKING_TIME.value,
+                f'Не более {Limits.MAX_COOKING_TIME.value} минут'
+            ),
         ),
         verbose_name="Время приготовления (минут)",
     )
@@ -178,8 +185,14 @@ class RecipeIngredient(Model):
     )
     amount = PositiveSmallIntegerField(
         validators=(
-            MinValueValidator(1,f"Минимальное количество — 1",),
-            MaxValueValidator(100,f'Максимальное количество — 1000'),
+            MinValueValidator(
+                Limits.MIN_AMOUNT_SUM.value,
+                f"Минимальное количество — {Limits.MIN_AMOUNT_SUM.value}",
+            ),
+            MaxValueValidator(
+                Limits.MAX_AMOUNT_SUM.value,
+                f'Максимальное количество — {Limits.MAX_AMOUNT_SUM.value}'
+            ),
         ),
         verbose_name="Количество",
     )
@@ -215,7 +228,6 @@ class Favorite(Model):
         verbose_name="Рецепт",
     )
 
-
     class Meta:
         ordering = ["-id"]
         verbose_name = "Избранное"
@@ -223,14 +235,14 @@ class Favorite(Model):
 
         constraints = (
             UniqueConstraint(
-                fields=("user", "recipe"), 
+                fields=("user", "recipe"),
                 name="unique_favorite_recipe",
             ),
         )
 
     def __str__(self):
         return f'{self.user} добавил "{self.recipe}" в Избранное'
-    
+
 
 class ShoppingList(Model):
     """Модель для хранения списка покупок."""

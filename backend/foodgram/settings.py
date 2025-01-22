@@ -7,19 +7,15 @@ load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-#SECRET_KEY='django-insecure-#c^e*c0@!u#t%qkr4sn@fp85d$6v25&(b%f=uv2bob01()5*_-'
 SECRET_KEY = os.getenv('SECRET_KEY', '123')
 
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '127.0.0.1,localhost').split(',')
 
-IS_LOCAL=True
+IS_LOCAL = True
 
-DEBUG = os.getenv('DEBUG', 'False') == 'True' 
-
-
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
 # CSRF_TRUSTED_ORIGINS = []
-
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -73,7 +69,7 @@ WSGI_APPLICATION = 'foodgram.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-if IS_LOCAL == True:
+if IS_LOCAL:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',

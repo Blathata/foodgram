@@ -51,12 +51,12 @@ class MyUser(AbstractUser):
     first_name = CharField(
         max_length=Limits.MAX_LEN_FIRST_NAME_USER.value,
         help_text=help_texts.HELP_TEXT_FIRST_NAME_USER,
-        verbose_name= 'Имя пользователя'
+        verbose_name='Имя пользователя'
     )
     last_name = CharField(
         max_length=Limits.MAX_LEN_LAST_NAME_USER.value,
         help_text=help_texts.HELP_TEXT_LAST_NAME_USER,
-        verbose_name= 'Фамилия пользователя'
+        verbose_name='Фамилия пользователя'
     )
     password = CharField(
         max_length=Limits.MAX_LEN_PASSWORD_USER.value,
@@ -73,7 +73,6 @@ class MyUser(AbstractUser):
         null=True,
         verbose_name='Аватар'
     )
-
 
     class Meta:
         ordering = ('username',)
