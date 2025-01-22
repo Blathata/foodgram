@@ -31,11 +31,6 @@ HELP_TEXT_NAME_TAG = (
     f"Максимум {Limits.MAX_LEN_NAME_TAG} символов."
 )
 
-HELP_TEXT_COLOR_TAG = (
-    "Заполняется в формате HEX. Пример #ffffff.  "
-    f"Максимум {Limits.MAX_LEN_COLOR_TAG} символов."
-)
-
 HELP_TEXT_SLUG_TAG = (
     "Заполняется автоматически по названию. "
     f"Максимум {Limits.MAX_LEN_SLUG_TAG} символов."

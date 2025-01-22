@@ -1,6 +1,6 @@
 from django.contrib.admin import register, ModelAdmin
 from django.contrib.auth.admin import UserAdmin
-from users.models import Subscribe, MyUser
+from users.models import Subscription, MyUser
 
 
 @register(MyUser)
@@ -37,6 +37,6 @@ class MyUserAdmin(UserAdmin):
     save_on_top = True
 
 
-@register(Subscribe)
-class SubscribeAdmin(ModelAdmin):
-    list_display = ('user', 'author', 'subscription_date')
+@register(Subscription)
+class SubscriptionAdmin(ModelAdmin):
+    list_display = ('user', 'author')

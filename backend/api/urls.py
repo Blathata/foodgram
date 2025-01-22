@@ -1,39 +1,28 @@
-from django.urls import include, path, re_path
+from api.views import (
+    CustomUserViewSet,
+    IngredientViewSet,
+    RecipeViewSet,
+    TagViewSet,
+)
+from django.urls import include, path
+from django.views.generic import TemplateView
 from rest_framework.routers import DefaultRouter
 
-from .views import (
-    IngredientViewSet, 
-    RecipeViewSet, 
-    TagViewSet, 
-    CustomUserViewSet,
-    UserAvatarView,
-    UserSelfView
-    )
-
-
-app_name = 'api'
+app_name = "api"
 
 router = DefaultRouter()
-
-router.register('ingredients', IngredientViewSet,)
-router.register('tags', TagViewSet, basename='tags')
-router.register('recipes', RecipeViewSet,)
-router.register("users", CustomUserViewSet, basename='users')
+router.register("ingredients", IngredientViewSet, basename="ingredients")
+router.register("recipes", RecipeViewSet, basename="recipes")
+router.register("tags", TagViewSet, basename="tags")
+router.register("users", CustomUserViewSet, basename="users")
 
 urlpatterns = [
-    path('', include(router.urls)),
-    path('', include('djoser.urls')),
-    re_path(r'^auth/', include('djoser.urls.authtoken')),
+    path("", include(router.urls)),
+    path("", include("djoser.urls")),
     path(
-        'users/me/avatar/', UserAvatarView.as_view(), name='user-avatar'
+        "docs/",
+        TemplateView.as_view(template_name="docs/redoc.html"),
+        name="redoc",
     ),
-    path(
-        'users/me/', UserSelfView.as_view(), name='user-self'
-    ),
-    # path(
-    #     'users/set_password/',
-    #     djoser_views.UserViewSet.as_view({'post': 'set_password'}),
-    #     name='user-set-password'
-    # ),
-    # path('s/<str:short_id>/', redirect_to_recipe, name='short-link-redirect'),
+    path("auth/", include("djoser.urls.authtoken")),
 ]

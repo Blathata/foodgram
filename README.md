@@ -1,132 +1,121 @@
-## Проект Foodgram
+<h1 align='center'>
+  Проект «Фудграм» 
+</h1>
 
-![workflow](https://github.com/mikhailsoldatkin/foodgram-project-react/actions/workflows/foodgram_workflow.yml/badge.svg)
+<h2 align='center'>
+  Описание проекта
+</h2>
+ Проект в котором пользователи могут публиковать свои рецепты, добавлять чужие рецепты в избранное и подписываться на публикации других авторов. Зарегистрированным пользователям также будет доступен сервис «Список покупок». Он позволит создавать список продуктов, которые нужно купить для приготовления выбранных блюд.
 
-Foodgram - продуктовый помощник с базой кулинарных рецептов. Позволяет публиковать рецепты, сохранять избранные, а также формировать список покупок для выбранных рецептов. Можно подписываться на любимых авторов.
+<h2 align='center'>
+  Технологии
+</h2>
 
-Проект доступен по [адресу](https://foodgramproject.ru)
+- Python  
+- Django  
+- Django REST Framework  
+- PostgreSQL  
+- nginx  
+- gunicorn  
+- docker  
+- GitHub Actions 
 
-Документация к API доступна [здесь](https://foodgramproject.ru/api/docs/)
 
-В документации описаны возможные запросы к API и структура ожидаемых ответов. Для каждого запроса указаны уровни прав доступа.
+<h2 align='center'>
+  Как запустить проект:
+</h2>
 
-### Технологии:
-
-Python, Django, Django Rest Framework, Docker, Gunicorn, NGINX, PostgreSQL, Yandex Cloud, Continuous Integration, Continuous Deployment
-
-### Развернуть проект на удаленном сервере:
-
-- Клонировать репозиторий:
-```
-https://github.com/mikhailsoldatkin/foodgram-project-react.git
-```
-
-- Установить на сервере Docker, Docker Compose:
-
-```
-sudo apt install curl                                   # установка утилиты для скачивания файлов
-curl -fsSL https://get.docker.com -o get-docker.sh      # скачать скрипт для установки
-sh get-docker.sh                                        # запуск скрипта
-sudo apt-get install docker-compose-plugin              # последняя версия docker compose
-```
-
-- Скопировать на сервер файлы docker-compose.yml, nginx.conf из папки infra (команды выполнять находясь в папке infra):
+Клонировать репозиторий и перейти в него в командной строке:
 
 ```
-scp docker-compose.yml nginx.conf username@IP:/home/username/   # username - имя пользователя на сервере
-                                                                # IP - публичный IP сервера
+git clone git@github.com:Blathata/foodgram.git
 ```
 
-- Для работы с GitHub Actions необходимо в репозитории в разделе Secrets > Actions создать переменные окружения:
+Перейти в корневую директорию
 ```
-SECRET_KEY              # секретный ключ Django проекта
-DOCKER_PASSWORD         # пароль от Docker Hub
-DOCKER_USERNAME         # логин Docker Hub
-HOST                    # публичный IP сервера
-USER                    # имя пользователя на сервере
-PASSPHRASE              # *если ssh-ключ защищен паролем
-SSH_KEY                 # приватный ssh-ключ
-TELEGRAM_TO             # ID телеграм-аккаунта для посылки сообщения
-TELEGRAM_TOKEN          # токен бота, посылающего сообщение
-
-DB_ENGINE               # django.db.backends.postgresql
-POSTGRES_DB             # postgres
-POSTGRES_USER           # postgres
-POSTGRES_PASSWORD       # postgres
-DB_HOST                 # db
-DB_PORT                 # 5432 (порт по умолчанию)
+cd foodgram
 ```
 
-- Создать и запустить контейнеры Docker, выполнить команду на сервере
-*(версии команд "docker compose" или "docker-compose" отличаются в зависимости от установленной версии Docker Compose):*
-```
-sudo docker compose up -d
-```
+Создать файл .evn для хранения ключей:
 
-- После успешной сборки выполнить миграции:
-```
-sudo docker compose exec backend python manage.py migrate
-```
-
-- Создать суперпользователя:
-```
-sudo docker compose exec backend python manage.py createsuperuser
-```
-
-- Собрать статику:
-```
-sudo docker compose exec backend python manage.py collectstatic --noinput
-```
-
-- Наполнить базу данных содержимым из файла ingredients.json:
-```
-sudo docker compose exec backend python manage.py loaddata ingredients.json
-```
-
-- Для остановки контейнеров Docker:
-```
-sudo docker compose down -v      # с их удалением
-sudo docker compose stop         # без удаления
-```
-
-### После каждого обновления репозитория (push в ветку master) будет происходить:
-
-1. Проверка кода на соответствие стандарту PEP8 (с помощью пакета flake8)
-2. Сборка и доставка докер-образов frontend и backend на Docker Hub
-3. Разворачивание проекта на удаленном сервере
-4. Отправка сообщения в Telegram в случае успеха
-
-### Запуск проекта на локальной машине:
-
-- Клонировать репозиторий:
-```
-https://github.com/mikhailsoldatkin/foodgram-project-react.git
-```
-
-- В директории infra создать файл .env и заполнить своими данными по аналогии с example.env:
 ```
 DB_ENGINE=django.db.backends.postgresql
-POSTGRES_DB=postgres
+
+DB_NAME=postgres
 POSTGRES_USER=postgres
 POSTGRES_PASSWORD=postgres
-DB_HOST=db
+
+DB_HOST=db # Имя контейнера с БД в docker-compose.yml
 DB_PORT=5432
-SECRET_KEY='секретный ключ Django'
+
+ALLOWED_HOSTS=<Your_host>
+SECRET_KEY=<Your_some_long_string>
+DEBUG=True
 ```
 
-- Создать и запустить контейнеры Docker, последовательно выполнить команды по созданию миграций, сбору статики, 
-созданию суперпользователя, как указано выше.
+Генерируем секретный ключ:
+
 ```
-docker-compose -f docker-compose-local.yml up -d
+Запускаем интерпретатор Python
+python manage.py shell
+Генерируем ключ
+from django.core.management.utils import get_random_secret_key
+get_random_secret_key()
+Добавить в переменую в .evn SECRET_KEY=... сгенерированый ключ
 ```
 
+Запустить docker-compose.production:
 
-- После запуска проект будут доступен по адресу: [http://localhost/](http://localhost/)
+```
+docker compose -f docker-compose.production.yml up
+```
 
+Выполнить миграции, сбор статики:
 
-- Документация будет доступна по адресу: [http://localhost/api/docs/](http://localhost/api/docs/)
+```
+docker compose -f docker-compose.production.yml exec backend python manage.py migrate
+docker compose -f docker-compose.production.yml exec backend python manage.py collectstatic
+docker compose -f docker-compose.production.yml exec backend cp -r /app/collected_static/. /static/static/
 
+```
 
-### Автор backend'а:
+Создать суперпользователя, ввести необходимые поля:
 
-Михаил Солдаткин (c) 2022
+```
+docker compose -f docker-compose.production.yml exec backend python manage.py createsuperuser
+```
+
+<h1 align='center'>
+  Как работать с репозиторием финального задания
+</h1>
+<h2 align='center'>
+  Что нужно сделать
+</h2>
+
+Настроить запуск проекта foodgram в контейнерах и CI/CD с помощью GitHub Actions
+
+<h1 align='center'>
+  Как проверить работу с помощью автотестов
+</h1>
+
+В корне репозитория создайте файл tests.yml со следующим содержимым:
+```yaml
+repo_owner: ваш_логин_на_гитхабе
+kittygram_domain: полная ссылка (https://доменное_имя) на ваш проект foodgram
+taski_domain: полная ссылка (https://доменное_имя) на ваш проект foodgram
+dockerhub_username: ваш_логин_на_докерхабе
+```
+
+Скопируйте содержимое файла `.github/workflows/main.yml` в файл `foodgram_workflow.yml` в корневой директории проекта.
+
+Для локального запуска тестов создайте виртуальное окружение, установите в него зависимости из backend/requirements.txt и запустите в корневой директории проекта `pytest`.
+<h1 align='center'>
+  Чек-лист для проверки перед отправкой задания
+</h1>
+
+- Проект Taski доступен по доменному имени, указанному в `tests.yml`.
+- Проект Kittygram доступен по доменному имени, указанному в `tests.yml`.
+- Пуш в ветку main запускает тестирование и деплой Kittygram, а после успешного деплоя вам приходит сообщение в телеграм.
+- В корне проекта есть файл `foodgram_workflow.yml`.
+
+Проект разработал Брежнев Иван (https://github.com/Blathata).

@@ -6,9 +6,9 @@ from .models import (
     Ingredient,
     Recipe,
     Tag,
-    ShoppingCart,
-    Favourite,
-    IngredientInRecipe,
+    ShoppingList,
+    Favorite,
+    RecipeIngredient,
     )
 
 
@@ -58,16 +58,16 @@ class TagAdmin(ModelAdmin):
     list_display = ('name', 'slug',)
 
 
-@register(ShoppingCart)
-class ShoppingCartAdmin(ModelAdmin):
+@register(ShoppingList)
+class ShoppingListAdmin(ModelAdmin):
     list_display = ('user', 'recipe',)
 
 
-@register(Favourite)
-class FavouriteAdmin(ModelAdmin):
+@register(Favorite)
+class FavoriteAdmin(ModelAdmin):
     list_display = ('user', 'recipe',)
 
 
-@register(IngredientInRecipe)
-class IngredientInRecipe(ModelAdmin):
+@register(RecipeIngredient)
+class RecipeIngredientAdmin(ModelAdmin):
     list_display = ('recipe', 'ingredient', 'amount',)
