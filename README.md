@@ -98,17 +98,6 @@ docker compose -f docker-compose.production.yml exec backend python manage.py cr
   Как проверить работу с помощью автотестов
 </h1>
 
-В корне репозитория создайте файл tests.yml со следующим содержимым:
-```yaml
-repo_owner: ваш_логин_на_гитхабе
-kittygram_domain: полная ссылка (https://доменное_имя) на ваш проект foodgram
-taski_domain: полная ссылка (https://доменное_имя) на ваш проект foodgram
-dockerhub_username: ваш_логин_на_докерхабе
-```
-
-Скопируйте содержимое файла `.github/workflows/main.yml` в файл `foodgram_workflow.yml` в корневой директории проекта.
-
-Для локального запуска тестов создайте виртуальное окружение, установите в него зависимости из backend/requirements.txt и запустите в корневой директории проекта `pytest`.
 <h1 align='center'>
   Чек-лист для проверки перед отправкой задания
 </h1>
