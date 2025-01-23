@@ -32,7 +32,7 @@ services:
       - .env
 
   gateway:
-    image: blatahata/foodgram_gateway
+    image: blathata/foodgram_gateway
     restart: always
     ports:
       - "8080:80"

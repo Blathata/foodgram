@@ -189,8 +189,8 @@ class RecipeViewSet(ModelViewSet):
 
     @action(
         detail=True,
-        methods=["GET"],
-        permission_classes=[AllowAny],
+        methods=("GET",),
+        permission_classes=(AllowAny,),
         url_path="get-link",
         url_name="get-link",
     )
@@ -204,8 +204,8 @@ class RecipeViewSet(ModelViewSet):
 
     @action(
         detail=True,
-        methods=["POST", "DELETE"],
-        permission_classes=[IsAuthenticated],
+        methods=("POST", "DELETE",),
+        permission_classes=(IsAuthenticated,),
         url_path="shopping_cart",
         url_name="shopping_cart",
     )
@@ -252,8 +252,8 @@ class RecipeViewSet(ModelViewSet):
 
     @action(
         detail=False,
-        methods=["GET"],
-        permission_classes=[IsAuthenticated],
+        methods=("GET",),
+        permission_classes=(IsAuthenticated,),
         url_path="download_shopping_cart",
         url_name="download_shopping_cart",
     )
@@ -270,8 +270,8 @@ class RecipeViewSet(ModelViewSet):
 
     @action(
         detail=True,
-        methods=["POST", "DELETE"],
-        permission_classes=[IsAuthenticated],
+        methods=("POST", "DELETE"),
+        permission_classes=(IsAuthenticated,),
         url_path="favorite",
         url_name="favorite",
     )
