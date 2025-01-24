@@ -13,7 +13,6 @@ services:
       - .env
 
   backend:
-    container_name: backend
     image: blathata/foodgram_backend
     restart: always
     volumes:
