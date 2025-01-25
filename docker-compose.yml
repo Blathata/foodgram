@@ -35,7 +35,7 @@ services:
     container_name: gateway
     build: ./infra/
     ports:
-      - "8080:80"
+      - "9090:80"
     volumes:
       - static:/staticfiles/
       - media:/app/media/

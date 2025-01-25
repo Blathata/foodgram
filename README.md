@@ -8,7 +8,7 @@
  Проект в котором пользователи могут публиковать свои рецепты, добавлять чужие рецепты в избранное и подписываться на публикации других авторов. Зарегистрированным пользователям также будет доступен сервис «Список покупок». Он позволит создавать список продуктов, которые нужно купить для приготовления выбранных блюд.
 
 
-Проект доступен по [адресу](http://iblat.site:8080)
+Проект доступен по [адресу](http://foodgram-iblat.zapto.org)
 
 
 <h2 align='center'>
@@ -71,22 +71,28 @@ get_random_secret_key()
 Запустить docker-compose.production:
 
 ```
-docker compose -f docker-compose.production.yml up
+sudo docker compose -f docker-compose.production.yml up
 ```
 
 Выполнить миграции, сбор статики:
 
 ```
-docker compose -f docker-compose.production.yml exec backend python manage.py migrate
-docker compose -f docker-compose.production.yml exec backend python manage.py collectstatic
-docker compose -f docker-compose.production.yml exec backend cp -r /app/collected_static/. /static/static/
+sudo docker compose -f docker-compose.production.yml exec backend python manage.py collectstatic
+sudo docker compose -f docker-compose.production.yml exec backend python manage.py migrate
+sudo docker compose -f docker-compose.production.yml exec backend cp -r /app/collected_static/. /static/static/
 
 ```
 
 Создать суперпользователя, ввести необходимые поля:
 
 ```
-docker compose -f docker-compose.production.yml exec backend python manage.py createsuperuser
+sudo docker compose -f docker-compose.production.yml exec backend python manage.py createsuperuser
+```
+
+Импортируйте ингредиенты и теги в базу данных:  
+
+``` 
+sudo docker compose -f docker-compose.production.yml exec backend python manage.py import_data
 ```
 
 <h1 align='center'>
