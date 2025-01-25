@@ -30,7 +30,7 @@ class RecipeAdmin(ModelAdmin):
 
     @display(description='В избранных')
     def in_favorites(self, obj):
-        return obj.favorites.count()
+        return obj.favorite.count()
 
     @action(description="Опубликовать выбранные рецепты")
     def set_published(self, request, queryset):

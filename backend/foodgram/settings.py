@@ -11,11 +11,11 @@ SECRET_KEY = os.getenv('SECRET_KEY', '123')
 
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '127.0.0.1,localhost').split(',')
 
-IS_LOCAL = False
+IS_LOCAL = True
 
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
-# CSRF_TRUSTED_ORIGINS = []
+CSRF_TRUSTED_ORIGINS = ['https://foodgram-iblat.zapto.org']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
