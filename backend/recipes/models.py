@@ -1,5 +1,3 @@
-"""Модуль для создания, настройки и управления моделями пакета `recipe`."""
-
 from django.contrib.auth import get_user_model
 from django.core.validators import (
     MaxValueValidator,
@@ -22,8 +20,8 @@ from django.db.models import (
     Manager,
 )
 
-from core.enums import Limits
 from core import help_texts
+from core.enums import Limits
 
 User = get_user_model()
 
@@ -42,15 +40,15 @@ class Ingredient(Model):
     name = CharField(
         max_length=Limits.MAX_LEN_NAME_INGREDIENT.value,
         db_index=True,
-        verbose_name='Название',
+        verbose_name="Название",
     )
     measurement_unit = CharField(
         max_length=Limits.MAX_LEN_MEASUREMENT_INGREDIENT.value,
-        verbose_name='Единица измерения',
+        verbose_name="Единица измерения",
     )
 
     class Meta:
-        ordering = ["-id"]
+        ordering = ("-id",)
         verbose_name = "Ингредиент"
         verbose_name_plural = "Ингредиенты"
         constraints = (
@@ -61,7 +59,7 @@ class Ingredient(Model):
         )
 
     def __str__(self):
-        return f'{self.name}, {self.measurement_unit}'
+        return f"{self.name}, {self.measurement_unit}"
 
 
 class Tag(Model):
@@ -72,7 +70,7 @@ class Tag(Model):
         max_length=Limits.MAX_LEN_NAME_TAG.value,
         unique=True,
         help_text=help_texts.HELP_TEXT_NAME_TAG,
-        verbose_name='Название'
+        verbose_name="Название",
     )
     slug = SlugField(
         max_length=Limits.MAX_LEN_SLUG_TAG.value,
@@ -82,18 +80,18 @@ class Tag(Model):
         validators=[
             RegexValidator(
                 regex=SLAG_REGEX,
-                message='Используйте только буквы и символы'
+                message="Используйте только буквы и символы",
             ),
         ]
     )
 
     class Meta:
-        verbose_name = 'Тег'
-        verbose_name_plural = 'Теги'
+        # ordering = ['id'],
+        verbose_name_plural = "Теги",
         constraints = (
             UniqueConstraint(
-                fields=('name', 'slug'),
-                name='unique_tags',
+                fields=("name", "slug"),
+                name="unique_tags",
             ),
         )
 
@@ -105,11 +103,11 @@ class Recipe(Model):
     """"Модель для рецептов."""
     class Status(IntegerChoices):
         """Отображает статус публикации"""
-        DRAFT = 0, 'Черновик'
-        PUBLISHED = 1, 'Опубликовано'
+        DRAFT = 0, "Черновик"
+        PUBLISHED = 1, "Опубликовано"
 
     name = CharField(
-        verbose_name='Название',
+        verbose_name="Название",
         max_length=Limits.MAX_LEN_NAME_RECIPES.value
     )
     text = TextField(
@@ -118,7 +116,7 @@ class Recipe(Model):
     )
     image = ImageField(
         upload_to="photos/%Y/%m/%d/",
-        verbose_name='Изображение',
+        verbose_name="Изображение",
     )
     author = ForeignKey(
         User,
@@ -139,27 +137,27 @@ class Recipe(Model):
             ),
             MaxValueValidator(
                 Limits.MAX_COOKING_TIME.value,
-                f'Не более {Limits.MAX_COOKING_TIME.value} минут'
+                f"Не более {Limits.MAX_COOKING_TIME.value} минут"
             ),
         ),
         verbose_name="Время приготовления (минут)",
     )
     ingredients = ManyToManyField(
         Ingredient,
-        related_name='recipes',
+        related_name="recipes",
         through="RecipeIngredient",
         verbose_name='Ингредиенты'
     )
     tags = ManyToManyField(
         Tag,
-        related_name='recipes',
-        verbose_name='Теги'
+        related_name="recipes",
+        verbose_name="Теги"
     )
 
     class Meta:
-        ordering = ('-id',)
-        verbose_name = 'Рецепт'
-        verbose_name_plural = 'Рецепты'
+        ordering = ("-id",)
+        verbose_name = "Рецепт"
+        verbose_name_plural = "Рецепты"
 
     objects = Manager()
     published = PublishedManager()
@@ -191,7 +189,7 @@ class RecipeIngredient(Model):
             ),
             MaxValueValidator(
                 Limits.MAX_AMOUNT_SUM.value,
-                f'Максимальное количество — {Limits.MAX_AMOUNT_SUM.value}'
+                f"Максимальное количество — {Limits.MAX_AMOUNT_SUM.value}"
             ),
         ),
         verbose_name="Количество",
@@ -241,7 +239,7 @@ class Favorite(Model):
         )
 
     def __str__(self):
-        return f'{self.user} добавил "{self.recipe}" в Избранное'
+        return f"{self.user} добавил {self.recipe} в Избранное"
 
 
 class ShoppingList(Model):
@@ -261,6 +259,7 @@ class ShoppingList(Model):
     )
 
     class Meta:
+        ordering = ('user',),
         verbose_name = "Список покупок"
         verbose_name_plural = "Списки покупок"
 

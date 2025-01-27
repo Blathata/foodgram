@@ -1,3 +1,30 @@
+from django.contrib.auth import get_user_model
+from django.db.models import Count, Sum
+from django.http import Http404, HttpResponse
+from django.shortcuts import get_object_or_404, redirect
+from django.views.decorators.http import require_GET
+from django_filters.rest_framework import DjangoFilterBackend
+from djoser.views import UserViewSet
+from rest_framework.viewsets import (
+    ModelViewSet,
+    ReadOnlyModelViewSet,
+)
+from rest_framework.status import (
+    HTTP_400_BAD_REQUEST,
+    HTTP_201_CREATED,
+    HTTP_204_NO_CONTENT,
+    HTTP_404_NOT_FOUND,
+    HTTP_200_OK,
+)
+from rest_framework.decorators import action
+from rest_framework.permissions import (
+    AllowAny,
+    IsAuthenticated,
+    IsAuthenticatedOrReadOnly,
+)
+from rest_framework.response import Response
+from rest_framework.reverse import reverse
+
 from api.filters import IngredientFilter, RecipeFilter
 from api.pagination import CustomLimitPagination
 from api.permissions import IsAdminAuthorOrReadOnly
@@ -14,13 +41,6 @@ from api.serializer import (
     SubscriberDetailSerializer,
     TagSerializer,
 )
-from django.contrib.auth import get_user_model
-from django.db.models import Count, Sum
-from django.http import Http404, HttpResponse
-from django.shortcuts import get_object_or_404, redirect
-from django.views.decorators.http import require_GET
-from django_filters.rest_framework import DjangoFilterBackend
-from djoser.views import UserViewSet
 from recipes.models import (
     Favorite,
     Ingredient,
@@ -29,25 +49,6 @@ from recipes.models import (
     ShoppingList,
     Tag,
 )
-from rest_framework.viewsets import (
-    ReadOnlyModelViewSet,
-    ModelViewSet,
-)
-from rest_framework.status import (
-    HTTP_200_OK,
-    HTTP_201_CREATED,
-    HTTP_400_BAD_REQUEST,
-    HTTP_204_NO_CONTENT,
-    HTTP_404_NOT_FOUND,
-)
-from rest_framework.decorators import action
-from rest_framework.permissions import (
-    AllowAny,
-    IsAuthenticated,
-    IsAuthenticatedOrReadOnly,
-)
-from rest_framework.response import Response
-from rest_framework.reverse import reverse
 from users.models import Subscription
 
 User = get_user_model()
@@ -120,22 +121,19 @@ class CustomUserViewSet(UserViewSet):
             serializer = SubscriberCreateSerializer(
                 data=data, context={"request": request}
             )
-            if serializer.is_valid():
-                serializer.save()
-                queryset = (
-                    Subscription.objects.filter(id=serializer.instance.id)
-                    .annotate(recipes_count=Count("author__recipes"))
-                    .first()
-                )
-                serializer = SubscriberDetailSerializer(
-                    queryset, context={"request": request}
-                )
-                return Response(
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            queryset = (
+                Subscription.objects.filter(id=serializer.instance.id)
+                .annotate(recipes_count=Count("author__recipes"))
+                .first()
+            )
+            serializer = SubscriberDetailSerializer(
+                queryset, context={"request": request}
+            )
+            return Response(
                     serializer.data, status=HTTP_201_CREATED
                 )
-            return Response(
-                serializer.errors, status=HTTP_400_BAD_REQUEST
-            )
 
         elif request.method == "DELETE":
             if not User.objects.filter(id=id).exists():
@@ -183,7 +181,7 @@ class RecipeViewSet(ModelViewSet):
     )
 
     def get_serializer_class(self):
-        if self.action in ("list", "retrieve", "get-link"):
+        if self.action in ("list", "retrieve", "get-link"): 
             return RecipeReadSerializer
         return RecipeWriteSerializer
 
@@ -218,17 +216,13 @@ class RecipeViewSet(ModelViewSet):
             serializer = ShoppingCartCreateSerializer(
                 data=data, context={"request": request}
             )
-            if serializer.is_valid():
-                serializer.save()
-                serializer = ShortRecipeSerializer(
-                    recipe, context={"request": request}
-                )
-                return Response(
-                    serializer.data, status=HTTP_201_CREATED
-                )
-
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            serializer = ShortRecipeSerializer(
+                recipe, context={"request": request}
+            )
             return Response(
-                serializer.errors, status=HTTP_400_BAD_REQUEST
+                serializer.data, status=HTTP_201_CREATED
             )
 
         elif request.method == "DELETE":
@@ -284,17 +278,13 @@ class RecipeViewSet(ModelViewSet):
             serializer = FavoriteCreateSerializer(
                 data=data, context={"request": request}
             )
-            if serializer.is_valid():
-                serializer.save()
-                serializer = ShortRecipeSerializer(
-                    recipe, context={"request": request}
-                )
-                return Response(
-                    serializer.data, status=HTTP_201_CREATED
-                )
-
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            serializer = ShortRecipeSerializer(
+                recipe, context={"request": request}
+            )
             return Response(
-                serializer.errors, status=HTTP_400_BAD_REQUEST
+                serializer.data, status=HTTP_201_CREATED
             )
 
         elif request.method == "DELETE":

@@ -21,10 +21,9 @@ from recipes.models import (
     ShoppingList,
     Tag,
 )
-from users.models import Subscription
 from core.enums import Limits
-
 from core.utils import get_serializer_method_field_value
+from users.models import Subscription
 
 User = get_user_model()
 
@@ -116,6 +115,10 @@ class RecipeIngredientSerializer(ModelSerializer):
 
 class RecipeIngredientWriteSerializer(ModelSerializer):
     id = IntegerField()
+    amount = IntegerField(
+        max_value=Limits.MAX_VALUE_AMOUNT.value,
+        min_value=Limits.MIN_VALUE_AMOUNT.value,
+        )
 
     class Meta:
         model = RecipeIngredient
@@ -169,6 +172,10 @@ class RecipeWriteSerializer(ModelSerializer):
         label="Ingredients",
     )
     image = Base64ImageField(allow_null=True, label="images")
+    cooking_time = IntegerField(
+        max_value=Limits.MAX_VALUE_AMOUNT.value,
+        min_value=Limits.MIN_VALUE_AMOUNT.value,
+        )
 
     class Meta:
         model = Recipe
@@ -221,14 +228,22 @@ class RecipeWriteSerializer(ModelSerializer):
     def create_tags(self, tags, recipe):
         recipe.tags.set(tags)
 
+    # def create_ingredients(self, ingredients, recipe):
+    #     for ingredient_data in ingredients:
+    #         ingredient_id = ingredient_data["id"]
+    #         ingredient = Ingredient.objects.get(pk=ingredient_id)
+    #         amount = ingredient_data["amount"]
+    #         RecipeIngredient.objects.create(
+    #             ingredient=ingredient, recipe=recipe, amount=amount
+    #         )
+
     def create_ingredients(self, ingredients, recipe):
-        for ingredient_data in ingredients:
-            ingredient_id = ingredient_data["id"]
-            ingredient = Ingredient.objects.get(pk=ingredient_id)
-            amount = ingredient_data["amount"]
-            RecipeIngredient.objects.create(
-                ingredient=ingredient, recipe=recipe, amount=amount
-            )
+        RecipeIngredient.objects.bulk_create(
+            [RecipeIngredient(
+                recipe=recipe,
+                ingredient_id=ing.get('id'),
+                amount=ing.get('amount')) for ing in ingredients]
+                )
 
     def create(self, validated_data):
         ingredients = validated_data.pop("ingredients")
@@ -249,9 +264,19 @@ class RecipeWriteSerializer(ModelSerializer):
                 {"ingredients": "Добавьте ингридиент"}
             )
         instance.tags.set(tags)
-        RecipeIngredient.objects.filter(recipe=instance).delete()
+        RecipeIngredient.objects.filter(recipe=instance).delete() 
         self.create_ingredients(validated_data.pop("ingredients"), instance)
         return super().update(instance, validated_data)
+    
+    
+    #    def update(self, instance, validated_data):
+    #     """Обновление рецепта."""
+    #     ingredients_data = validated_data.pop('recipe_ingredients', None)
+    #     validated_ingredients = self.validate_ingredients(ingredients_data)
+    #     instance.recipe_ingredients.all().delete()
+    #     self.save_ingredients(instance, validated_ingredients)
+    #     return super().update(instance, validated_data)
+
 
 
 class ShortRecipeSerializer(ModelSerializer):
@@ -315,13 +340,13 @@ class SubscriberDetailSerializer(ModelSerializer):
         )
 
     def get_is_subscribed(self, obj):
-        user = self.context.get("request").user
+        user = self.context['request'].user
         return Subscription.objects.filter(
             author=obj.author, user=user
         ).exists()
 
     def get_recipes(self, obj):
-        request = self.context.get("request")
+        request = self.context['request']
         limit = request.GET.get(
             "recipes_limit",
             Limits.PAGE_SIZE.value
