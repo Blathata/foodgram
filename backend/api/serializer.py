@@ -294,7 +294,7 @@ class SubscriberCreateSerializer(ModelSerializer):
             raise ValidationError(
                 "Вы не можете подписаться на себя"
             )
-        if Subscription.objects.filter(user=user, author=author).exists():
+        if user.following.exists():
             raise ValidationError(
                 "Вы уже подписаны на этого пользователя"
             )
@@ -332,21 +332,14 @@ class SubscriberDetailSerializer(ModelSerializer):
 
     def get_is_subscribed(self, obj):
         user = self.context['request'].user
-        return Subscription.objects.filter(
-            author=obj.author, user=user
-        ).exists()
+        return user.following.exists()
 
     def get_recipes(self, obj):
         request = self.context['request']
-        limit = request.GET.get(
-            "recipes_limit",
-            Limits.PAGE_SIZE.value
-        )
-        limit = (
-            int(limit)
-            if isinstance(limit, str) and limit.isdigit()
-            else Limits.PAGE_SIZE.value
-        )
+        if "recipes_limit" in request.GET:
+            limit = int(request.GET["recipes_limit"])
+        else:
+            limit = Limits.PAGE_SIZE.value
 
         return ShortRecipeSerializer(
             Recipe.objects.filter(author=obj.author)[:limit],
