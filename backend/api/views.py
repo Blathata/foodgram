@@ -10,11 +10,11 @@ from rest_framework.viewsets import (
     ReadOnlyModelViewSet,
 )
 from rest_framework.status import (
-    HTTP_400_BAD_REQUEST,
+    HTTP_200_OK,
     HTTP_201_CREATED,
     HTTP_204_NO_CONTENT,
+    HTTP_400_BAD_REQUEST,
     HTTP_404_NOT_FOUND,
-    HTTP_200_OK,
 )
 from rest_framework.decorators import action
 from rest_framework.permissions import (
@@ -97,7 +97,7 @@ class CustomUserViewSet(UserViewSet):
     def subscriptions(self, request):
         user = request.user
         queryset = (
-            Subscription.objects.filter(user=user)
+             user.follower
             .select_related("author")
             .prefetch_related("author__recipes")
             .annotate(recipes_count=Count("author__recipes"))
@@ -124,7 +124,7 @@ class CustomUserViewSet(UserViewSet):
             serializer.is_valid(raise_exception=True)
             serializer.save()
             queryset = (
-                Subscription.objects.filter(id=serializer.instance.id)
+                user.follower
                 .annotate(recipes_count=Count("author__recipes"))
                 .first()
             )
@@ -141,7 +141,7 @@ class CustomUserViewSet(UserViewSet):
                     {"errors": "Пользователь с данным ID не найден"},
                     status=HTTP_404_NOT_FOUND,
                 )
-            deleted_count, _ = Subscription.objects.filter(
+            deleted_count, _ = user.follower.filter(
                 user=user, author_id=id
             ).delete()
             if deleted_count == 0:
@@ -226,7 +226,7 @@ class RecipeViewSet(ModelViewSet):
             )
 
         elif request.method == "DELETE":
-            deleted_count, _ = ShoppingList.objects.filter(
+            deleted_count, _ = user.shopping_list.filter(
                 user=user, recipe=recipe
             ).delete()
             if deleted_count == 0:
@@ -288,7 +288,7 @@ class RecipeViewSet(ModelViewSet):
             )
 
         elif request.method == "DELETE":
-            deleted_count, _ = Favorite.objects.filter(
+            deleted_count, _ = user.favorite.filter(
                 user=user, recipe=recipe
             ).delete()
             if deleted_count == 0:
