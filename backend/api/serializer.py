@@ -255,9 +255,19 @@ class RecipeWriteSerializer(ModelSerializer):
                 {"ingredients": "Добавьте ингридиент"}
             )
         instance.tags.set(tags)
-        instance.recipe_ingredients.all().delete()
+        instance.recipe_ingredients.all().delete() 
         self.create_ingredients(validated_data.pop("ingredients"), instance)
         return super().update(instance, validated_data)
+    
+    
+    #    def update(self, instance, validated_data):
+    #     """Обновление рецепта."""
+    #     ingredients_data = validated_data.pop('recipe_ingredients', None)
+    #     validated_ingredients = self.validate_ingredients(ingredients_data)
+    #     instance.recipe_ingredients.all().delete()
+    #     self.save_ingredients(instance, validated_ingredients)
+    #     return super().update(instance, validated_data)
+
 
 
 class ShortRecipeSerializer(ModelSerializer):
@@ -284,7 +294,7 @@ class SubscriberCreateSerializer(ModelSerializer):
             raise ValidationError(
                 "Вы не можете подписаться на себя"
             )
-        if user.following.exists():
+        if Subscription.objects.filter(user=user, author=author).exists():
             raise ValidationError(
                 "Вы уже подписаны на этого пользователя"
             )
@@ -322,10 +332,9 @@ class SubscriberDetailSerializer(ModelSerializer):
 
     def get_is_subscribed(self, obj):
         user = self.context['request'].user
-        return user.follower.exists()
-        # return Subscription.objects.filter(
-        #     author=obj.author, user=user
-        # ).exists()
+        return Subscription.objects.filter(
+            author=obj.author, user=user
+        ).exists()
 
     def get_recipes(self, obj):
         request = self.context['request']
@@ -356,7 +365,7 @@ class ShoppingCartCreateSerializer(ModelSerializer):
         user = self.context["request"].user
         recipe = data.get("recipe")
 
-        if user.shopping_list.exists():
+        if ShoppingList.objects.filter(user=user, recipe=recipe).exists():
             raise ValidationError(
                 f'Рецепт "{recipe.name}" уже добавлен в список покупок.'
             )
@@ -377,7 +386,7 @@ class FavoriteCreateSerializer(ModelSerializer):
         user = self.context["request"].user
         recipe = data.get("recipe")
 
-        if user.favorite.exists():
+        if Favorite.objects.filter(user=user, recipe=recipe).exists():
             raise ValidationError(
                 f'Рецепт "{recipe.name}" уже добавлен в избранное.'
             )
