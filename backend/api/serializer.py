@@ -355,10 +355,9 @@ class ShoppingCartCreateSerializer(ModelSerializer):
         read_only_fields = ("id",)
 
     def validate(self, data):
-        user = self.context["request"].user
         recipe = data.get("recipe")
 
-        if ShoppingList.objects.filter(user=user, recipe=recipe).exists():
+        if recipe.shopping_list.exists():
             raise ValidationError(
                 f'Рецепт "{recipe.name}" уже добавлен в список покупок.'
             )
@@ -376,10 +375,9 @@ class FavoriteCreateSerializer(ModelSerializer):
         read_only_fields = ("id",)
 
     def validate(self, data):
-        user = self.context["request"].user
         recipe = data.get("recipe")
 
-        if Favorite.objects.filter(user=user, recipe=recipe).exists():
+        if recipe.favorite.exists():
             raise ValidationError(
                 f'Рецепт "{recipe.name}" уже добавлен в избранное.'
             )
