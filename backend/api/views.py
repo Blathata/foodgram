@@ -42,14 +42,11 @@ from api.serializer import (
     TagSerializer,
 )
 from recipes.models import (
-    Favorite,
     Ingredient,
     Recipe,
     RecipeIngredient,
-    ShoppingList,
     Tag,
 )
-from users.models import Subscription
 
 User = get_user_model()
 
@@ -97,7 +94,7 @@ class CustomUserViewSet(UserViewSet):
     def subscriptions(self, request):
         user = request.user
         queryset = (
-             user.follower
+            user.follower
             .select_related("author")
             .prefetch_related("author__recipes")
             .annotate(recipes_count=Count("author__recipes"))
@@ -132,8 +129,8 @@ class CustomUserViewSet(UserViewSet):
                 queryset, context={"request": request}
             )
             return Response(
-                    serializer.data, status=HTTP_201_CREATED
-                )
+                serializer.data, status=HTTP_201_CREATED
+            )
 
         elif request.method == "DELETE":
             if not User.objects.filter(id=id).exists():
@@ -181,7 +178,7 @@ class RecipeViewSet(ModelViewSet):
     )
 
     def get_serializer_class(self):
-        if self.action in ("list", "retrieve", "get-link"): 
+        if self.action in ("list", "retrieve", "get-link"):
             return RecipeReadSerializer
         return RecipeWriteSerializer
 

@@ -118,7 +118,7 @@ class RecipeIngredientWriteSerializer(ModelSerializer):
     amount = IntegerField(
         max_value=Limits.MAX_VALUE_AMOUNT.value,
         min_value=Limits.MIN_VALUE_AMOUNT.value,
-        )
+    )
 
     class Meta:
         model = RecipeIngredient
@@ -175,7 +175,7 @@ class RecipeWriteSerializer(ModelSerializer):
     cooking_time = IntegerField(
         max_value=Limits.MAX_VALUE_AMOUNT.value,
         min_value=Limits.MIN_VALUE_AMOUNT.value,
-        )
+    )
 
     class Meta:
         model = Recipe
@@ -234,7 +234,7 @@ class RecipeWriteSerializer(ModelSerializer):
                 recipe=recipe,
                 ingredient_id=ing.get('id'),
                 amount=ing.get('amount')) for ing in ingredients]
-                )
+        )
 
     def create(self, validated_data):
         ingredients = validated_data.pop("ingredients")
@@ -255,19 +255,9 @@ class RecipeWriteSerializer(ModelSerializer):
                 {"ingredients": "Добавьте ингридиент"}
             )
         instance.tags.set(tags)
-        instance.recipe_ingredients.all().delete() 
+        instance.recipe_ingredients.all().delete()
         self.create_ingredients(validated_data.pop("ingredients"), instance)
         return super().update(instance, validated_data)
-    
-    
-    #    def update(self, instance, validated_data):
-    #     """Обновление рецепта."""
-    #     ingredients_data = validated_data.pop('recipe_ingredients', None)
-    #     validated_ingredients = self.validate_ingredients(ingredients_data)
-    #     instance.recipe_ingredients.all().delete()
-    #     self.save_ingredients(instance, validated_ingredients)
-    #     return super().update(instance, validated_data)
-
 
 
 class ShortRecipeSerializer(ModelSerializer):
