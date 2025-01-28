@@ -1,5 +1,3 @@
-"""Модуль для создания, настройки и управления моделью пользователей."""
-
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import RegexValidator
 from django.db.models import (
@@ -22,7 +20,7 @@ from core import help_texts
 
 class MyUser(AbstractUser):
     """Кастомная модель пользователя"""
-    USER_REGEX = r'^[\w.@+-]+$'
+    USER_REGEX = r"^[\w.@+-]+$"
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ("username", "first_name", "last_name")
@@ -32,11 +30,11 @@ class MyUser(AbstractUser):
         unique=True,
         null=False,
         help_text=help_texts.HELP_TEXT_USERNAME_USER,
-        verbose_name='Юзернейм',
+        verbose_name="Юзернейм",
         validators=[
             RegexValidator(
                 regex=USER_REGEX,
-                message='Используйте только буквы и символы: w . @ + - ',
+                message="Используйте только буквы и символы: w . @ + - ",
             ),
         ]
     )
@@ -45,18 +43,18 @@ class MyUser(AbstractUser):
         unique=True,
         null=False,
         help_text=help_texts.HELP_TEXT_EMAIL_USER,
-        verbose_name='Электроная почта пользователя'
+        verbose_name="Электроная почта пользователя"
     )
 
     first_name = CharField(
         max_length=Limits.MAX_LEN_FIRST_NAME_USER.value,
         help_text=help_texts.HELP_TEXT_FIRST_NAME_USER,
-        verbose_name='Имя пользователя'
+        verbose_name="Имя пользователя"
     )
     last_name = CharField(
         max_length=Limits.MAX_LEN_LAST_NAME_USER.value,
         help_text=help_texts.HELP_TEXT_LAST_NAME_USER,
-        verbose_name='Фамилия пользователя'
+        verbose_name="Фамилия пользователя"
     )
     password = CharField(
         max_length=Limits.MAX_LEN_PASSWORD_USER.value,
@@ -68,16 +66,16 @@ class MyUser(AbstractUser):
         verbose_name="Активирован",
     )
     avatar = ImageField(
-        upload_to='avatar/',
+        upload_to="avatar/",
         blank=True,
         null=True,
-        verbose_name='Аватар'
+        verbose_name="Аватар"
     )
 
     class Meta:
-        ordering = ('username',)
-        verbose_name = 'Пользователь'
-        verbose_name_plural = 'Пользователи'
+        ordering = ("username",)
+        verbose_name = "Пользователь"
+        verbose_name_plural = "Пользователи"
 
     def __str__(self):
         return self.username

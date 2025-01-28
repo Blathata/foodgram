@@ -97,7 +97,7 @@ class CustomUserViewSet(UserViewSet):
     def subscriptions(self, request):
         user = request.user
         queryset = (
-            Subscription.objects.filter(user=user)
+            user.follower.all()
             .select_related("author")
             .prefetch_related("author__recipes")
             .annotate(recipes_count=Count("author__recipes"))
@@ -124,7 +124,7 @@ class CustomUserViewSet(UserViewSet):
             serializer.is_valid(raise_exception=True)
             serializer.save()
             queryset = (
-                Subscription.objects.filter(id=serializer.instance.id)
+                user.follower.all()
                 .annotate(recipes_count=Count("author__recipes"))
                 .first()
             )

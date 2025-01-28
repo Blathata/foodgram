@@ -86,8 +86,8 @@ class Tag(Model):
     )
 
     class Meta:
-        # ordering = ['id'],
-        verbose_name_plural = "Теги",
+        ordering = ("-id",)
+        verbose_name_plural = "Теги"
         constraints = (
             UniqueConstraint(
                 fields=("name", "slug"),
@@ -172,13 +172,13 @@ class RecipeIngredient(Model):
     recipe = ForeignKey(
         Recipe,
         on_delete=CASCADE,
-        related_name="ingredient_list",
+        related_name="recipe_ingredients",
         verbose_name="Рецепт",
     )
     ingredient = ForeignKey(
         Ingredient,
         on_delete=CASCADE,
-        related_name="ingredient_recipe",
+        related_name="recipe_ingredients",
         verbose_name="Ингредиент",
     )
     amount = PositiveSmallIntegerField(
@@ -196,7 +196,7 @@ class RecipeIngredient(Model):
     )
 
     class Meta:
-        ordering = ["-id"]
+        ordering = ("-id",)
         verbose_name = "Количество ингредиента"
         verbose_name_plural = "Количество ингредиентов"
         constraints = (
@@ -227,7 +227,7 @@ class Favorite(Model):
     )
 
     class Meta:
-        ordering = ["-id"]
+        ordering = ("-id",)
         verbose_name = "Избранное"
         verbose_name_plural = "Избранные рецепты"
 
